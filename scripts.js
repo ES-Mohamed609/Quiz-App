@@ -1,11 +1,11 @@
-const quizes = [
+const quizQuestions = [
     {
         question: "1. Software is defined as ......",
         a: "set of programs, documentation & configuration of data",
         b: "set of programs",
         c: "documentation and configuration of data",
         d: "None of the mentioned",
-        Answer: "a",
+        correctAnswer: "opt-a",
     },
     {
         question: "2. What does SDLC stand for?",
@@ -13,7 +13,7 @@ const quizes = [
         b: "Software Design Life Cycle",
         c: "Software Development Life Cycle",
         d: "System Development Life cycle",
-        Answer: "c",
+        correctAnswer: "opt-c",
     },
     {
         question: "3. Who is the father of Software Engineering?",
@@ -21,7 +21,7 @@ const quizes = [
         b: "Watts S. Humphrey",
         c: "Alan Turing",
         d: "Boris Beizer",
-        Answer: "b"
+        correctAnswer: "opt-b"
     },
     {
         question: "4. What are the features of Software Code?",
@@ -29,7 +29,7 @@ const quizes = [
         b: "Accessibility",
         c: "Modularity",
         d: "All of the above",
-        Answer: "c"
+        correctAnswer: "opt-c"
     },
     {
         question: "5. __________ is a software development activity that is not a part of software processes.",
@@ -37,7 +37,7 @@ const quizes = [
         b: "Specification",
         c: "Development",
         d: "Dependence",
-        Answer: "d"
+        correctAnswer: "opt-d"
     },
     {
         question: "6. Define Agile scrum methodology",
@@ -45,7 +45,7 @@ const quizes = [
         b: "project management that emphasizes decremental progress",
         c: "project management that emphasizes neutral progress",
         d: "project management that emphasizes no progress",
-        Answer: "a"
+        correctAnswer: "opt-a"
     },
     {
         question: "7. CASE stands for",
@@ -53,7 +53,7 @@ const quizes = [
         b: "Control Aided Science and Engineering",
         c: "Cost Aided System Experiments",
         d: "None of the mentioned",
-        Answer: "a"
+        correctAnswer: "opt-a"
     },
     {
         question: "8. ________ is defined as the process of generating analysis and designing documents?",
@@ -61,77 +61,71 @@ const quizes = [
         b: "Reverse engineering",
         c: "Software re-engineering",
         d: "Science and engineering",
-        Answer: "b"
+        correctAnswer: "opt-b"
     },
 ];
 
-const quiz = document.getElementById('quiz')
-const answers = document.querySelectorAll('.answer')
-const questionElement = document.getElementById('questions')
-const a_text = document.getElementById('a_text')
-const b_text = document.getElementById('b_text')
-const c_text = document.getElementById('c_text')
-const d_text = document.getElementById('d_text')
-const submitBtn = document.getElementById('submit')
-const startBtn = document.getElementById('start')
-const startContainer = document.getElementById('start-container')
+const quizContainer = document.getElementById('quiz');
+const answerOptions = document.querySelectorAll('.answer');
+const questionText = document.getElementById('question-text');
+const optionAText = document.getElementById('optionat');
+const optionBText = document.getElementById('optionbt');
+const optionCText = document.getElementById('optionct');
+const optionDText = document.getElementById('optiondt');
+const submitButton = document.getElementById('submit-button');
+const startButton = document.getElementById('start-button');
+const startContainer = document.getElementById('start-container');
 
-let currentQuiz = 0
-let score = 0
+let currentQuestionIndex = 0;
+let score = 0;
 
-startBtn.addEventListener('click', () => {
+startButton.addEventListener('click', () => {
     startContainer.style.display = 'none';
-    quiz.style.display = 'block';
+    quizContainer.style.display = 'block';
     loadQuiz();
 });
 
 function loadQuiz() {
-    deselectAnswers()
-
-    const currentQuizData = quizes[currentQuiz]
-    questionElement.innerHTML = currentQuizData.question
-    a_text.innerHTML = currentQuizData.a
-    b_text.innerHTML = currentQuizData.b
-    c_text.innerHTML = currentQuizData.c
-    d_text.innerHTML = currentQuizData.d
+    deselectAnswers();
+    const currentQuestionData = quizQuestions[currentQuestionIndex];
+    questionText.innerHTML = currentQuestionData.question;
+    optionAText.innerHTML = currentQuestionData.a;
+    optionBText.innerHTML = currentQuestionData.b;
+    optionCText.innerHTML = currentQuestionData.c;
+    optionDText.innerHTML = currentQuestionData.d;
 }
 
 function deselectAnswers() {
-    answers.forEach(answer => answer.checked = false)
+    answerOptions.forEach(answer => answer.checked = false);
 }
 
-function getSelected() {
-    let answer
-    answers.forEach(answerEl => {
-        if (answerEl.checked) {
-            answer = answerEl.id
+function getSelectedAnswer() {
+    let selectedAnswer;
+    answerOptions.forEach(answerOption => {
+        if (answerOption.checked) {
+            selectedAnswer = answerOption.id;
         }
-    })
-    return answer
+    });
+    return selectedAnswer;
 }
 
-submitBtn.addEventListener('click', () => {
-    const answer = getSelected()
-    if (answer) {
-        if (answer === quizes[currentQuiz].Answer) {
-            score++
+submitButton.addEventListener('click', () => {
+    const selectedAnswer = getSelectedAnswer();
+    if (selectedAnswer) {
+        if (selectedAnswer === quizQuestions[currentQuestionIndex].correctAnswer) {
+            score++;
         }
     }
-    currentQuiz++
+    currentQuestionIndex++;
 
-    if (currentQuiz < quizes.length) {
-        loadQuiz()
+    if (currentQuestionIndex < quizQuestions.length) {
+        loadQuiz();
     } else {
-        if (score >= 4) {
-            quiz.innerHTML = `
-                <h2>Congratulations 🤩 You answered ${score}/${quizes.length} questions correctly</h2>
-                <button onclick="location.reload()">Reload</button>
-            `
-        } else {
-            quiz.innerHTML = `
-                <h2>So sorry 😓You answered ${score}/${quizes.length} questions correctly. Try again!</h2>
-                <button onclick="location.reload()">Reload</button>
-            `
-        }
+        const scorePercentage = (score / quizQuestions.length) * 100;
+        quizContainer.innerHTML = `
+            <h2>You answered ${scorePercentage.toFixed(2)}% of questions correctly</h2>
+            ${scorePercentage >= 50 ? '<h3>Congratulations 🤩</h3>' : '<h3>Try Again 😢</h3>  <button id="reload-button" onclick="location.reload()">Reload</button>'}
+            
+        `;
     }
-})
+});
